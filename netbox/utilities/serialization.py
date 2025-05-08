@@ -6,6 +6,8 @@ from django.core import serializers
 
 from extras.utils import is_taggable
 
+from utilities import normalization
+
 __all__ = (
     'deserialize_object',
     'serialize_object',
@@ -68,6 +70,7 @@ def deserialize_object(model, fields, pk=None):
         Tag = apps.get_model('extras', 'Tag')
         m2m_data['tags'] = Tag.objects.filter(name__in=fields.pop('tags'))
 
+    fields = normalization.normalize_empty_strings(fields)
     data = {
         'model': '.'.join(content_type.natural_key()),
         'pk': pk,
